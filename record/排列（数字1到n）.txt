@@ -1,0 +1,32 @@
+/*全排列*/
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+void pp(int n, int* a, int current)
+{
+	int i, j;
+	if (current == n)
+	{
+		for (i = 0;i < n;i++)
+			printf("%d", a[i]);
+		printf("\n");
+	}
+	else 
+		for (j = 1;j <= n;j++)
+		{
+			int flag = 1;
+			for (i = 0;i < current;i++)
+			{
+				if (a[i] == j)
+					flag = 0;
+			}
+			if (flag)
+			{
+				a[current] = j;
+				pp(n, a, current + 1);
+			}
+
+		}
+	
+}

@@ -1,0 +1,51 @@
+#include<iostream>
+#include<string>
+using namespace std;
+const int MAX=10000;
+bool is[MAX];
+int prime[MAX];
+int pri()   //获得10000以内的素数。
+{
+    memset(is,true,sizeof(is));
+	int k=0;
+   for(int i=2;i<=10000;i++)
+	{
+        if(is[i])
+		{
+		   prime[k++]=i;
+           for(int j=i+i;j<MAX;j+=i)
+		       is[j]=false;
+		}
+	}
+   return k;
+}
+int main()
+{
+	int m,a,b,num;
+	num=pri();
+	while(cin>>m>>a>>b)
+	{
+       if(m==0)
+		   break;
+	   double max1=1,max2=1;
+	   double s=(double)a/(double)b;
+       for(int i=num-1;i>=0;i--)  //从大到小搜索。
+	   {
+		   for(int j=i;j<num;j++)  //j 增大。
+		   {
+			   if(prime[i]>m||prime[i]*prime[j]>m||(double)prime[i]/prime[j]<s)  //剪枝
+			   {break;}
+			   if((double)prime[i]/prime[j]>=s) //符合情况，记录保存prime[i],prime[j];
+			   {
+				   if(max1*max2<prime[i]*prime[j])
+				   {
+					   max1=prime[i];
+				       max2=prime[j];
+				   }
+			   }
+		   }
+	   }
+	   cout<<max1<<" "<<max2<<endl;
+	}
+	return 0;
+}

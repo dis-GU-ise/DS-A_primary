@@ -1,0 +1,43 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<math.h>
+int COUNT;
+//solution to eight queens
+void nextqueen(int a[], int current)//传入标记皇后位置的数组，当前需要处理的行数
+{
+	int i, j;
+	if (current == 8)//到达边界，该方案可行，总方案数加一（并输出皇后所在列的排列）
+	{
+		++COUNT;
+		for (i = 0;i < 8;i++)
+			printf("%d", a[i]);
+		printf("\n");
+	}
+	else//还未到达结尾
+	{
+		for (i = 0;i < 8;i++)
+		{
+			int flag = 1;
+			a[current] = i;//尝试在当前行的第i列放置一个皇后
+			for (j = 0;j < current;++j)//检查已经放好的皇后
+			{
+				if (a[j] == a[current] || (current + a[current]) == (j + a[j]) || (current - a[current] == j - a[j]))
+				{
+					flag = 0;break;
+				}//这个if的解释放在末尾（*）
+			}
+			if (flag)nextqueen(a, current + 1);//当前行成功放置，继续下一行
+		}
+	}
+}
+int main()
+{
+	int queen[8];//queen【i】所存的数表示第i行皇后所在列的序号（本解法默认行列均从0开始）
+	COUNT = 0;
+	nextqueen(queen, 0);
+	printf("%d", COUNT);
+}
+//关于（*）处：“不可放置”抽象为数学解释即：列数与先前皇后相同，
+// 或者行序号与列序号之和与先前皇后相同（说明在同一条副对角线）
+//再或者行序号与列序号之差与先前皇后相同（说明在同一条主对角线）

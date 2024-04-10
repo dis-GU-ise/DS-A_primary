@@ -1,0 +1,152 @@
+#include<bits/stdc++.h>
+using namespace std;
+void trans(char*exp,char *postexp)
+{
+	stack<char>opt;
+	int i = 0;
+	char e;
+	while (*exp != '\0')
+	{
+		switch(*exp)
+		{
+		case'(':
+			opt.push('(');
+			exp++;
+			break;
+		case')':
+			e=opt.top();
+			while (e != '(')
+			{
+				postexp[i++] = e;
+				opt.pop();
+				e = opt.top();
+			}
+			opt.pop();
+			exp++;
+			break;
+		case'+':
+		case'-':
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e != '(')
+				{
+					postexp[i++] = e;
+					opt.pop();
+				}
+				else
+					break;
+			}
+			opt.push(*exp);
+			exp++;
+			break;
+		case'*':
+		case'/':
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e == '*' || e == '/')
+				{
+					postexp[i++] = e;
+					opt.pop();
+				}
+				else
+					break;
+			}
+			opt.push(*exp);
+			exp++;
+			break;
+		default:
+			while (*exp >= '0' && *exp <= '9')
+			{
+				postexp[i++] = *exp;
+				exp++;
+			}
+			postexp[i++] = '#';
+			
+		}
+	}
+	while (!opt.empty())
+	{
+		e=opt.top();
+		postexp[i++] = e;
+		opt.pop();
+	}
+	postexp[i++] = '\0';
+}
+
+int cal(char* postexp)
+{
+	int a, b, c, d, e;
+	stack<int>num;
+	while (*postexp != '\0')
+	{
+		switch (*postexp)
+		{
+		case'+':
+			a = num.top();
+			num.pop();
+			b = num.top();
+			num.pop();
+			c = a + b;
+			num.push(c);
+			postexp++;
+			break;
+		case'-':
+			a = num.top();
+			num.pop();
+			b = num.top();
+			num.pop();
+			c = b-a;
+			num.push(c);
+			postexp++;
+			break;
+		case'*':
+			a = num.top();
+			num.pop();
+			b = num.top();
+			num.pop();
+			c = a * b;
+			num.push(c);
+			postexp++;
+			break;
+		case'/':
+			a = num.top();
+			num.pop();
+			b = num.top();
+			num.pop();
+			c = b/a;
+			num.push(c);
+			postexp++;
+			break;
+		default:
+			d = 0;
+			while (*postexp >= '0' && *postexp <= '9')
+			{
+				d = d * 10 + *postexp - '0';
+				postexp++;
+			}
+			num.push(d);
+			postexp++;
+			break;
+		}
+		
+	}
+	e = num.top();
+	num.pop();
+	return e;
+}
+
+
+int main()
+{
+	char exp[1000];
+	scanf_s("%s", exp, 1000);
+	char post[1000];
+	trans(exp, post);
+	printf("%s\n", post);
+	int ans;
+	ans = cal(post);
+	printf("%d", ans);
+	return 0;
+}

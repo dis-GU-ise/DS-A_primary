@@ -1,0 +1,152 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int ncount = 0;
+int tempnum;
+map<char, int>mp;
+map<char, string>hfm;
+
+typedef struct node {
+	int weight;
+	node* parent;
+	node* lc;
+	node* rc;
+	char name;
+}Node;
+
+Node* workspace[52];
+int wsnum[52] = { 0 };
+
+void init()
+{
+	int j = 0;
+	for (int i = 0;i < 26;i++)
+	{
+		if (mp['a' + i] != 0)
+		{
+			Node* p;
+			p = (Node*)malloc(sizeof(node));
+			p->weight = mp['a' + i];p->parent = p->lc = p->rc = NULL;p->name = 'a' + i;
+			workspace[j] = p;
+			wsnum[j++] = p->weight;
+		}
+	}
+}
+
+void select()
+{
+	int m, n, min1;
+	min1 = 100000;
+	for (int i = 0;i < 52;i++)
+	{
+		if (wsnum[i] != 0 && wsnum[i] < min1)
+		{
+			min1 = wsnum[i];
+			m = i;
+		}
+	}
+	min1 = 100000;
+	for (int i = 0;i < 52;i++)
+	{
+		if (i == m)continue;
+		if (wsnum[i] != 0 && wsnum[i] < min1)
+		{
+			min1 = wsnum[i];
+			n = i;
+		}
+	}
+	Node* r;
+	r = (Node*)malloc(sizeof(Node));
+	r->weight = (workspace[m]->weight) + (workspace[n]->weight);
+	r->lc = workspace[m];
+	r->rc = workspace[n];
+	r->parent = NULL;
+	r->name = '#';
+	workspace[ncount] = r;
+	wsnum[ncount++] = r->weight;
+	wsnum[m] = 0;
+	wsnum[n] = 0;
+	tempnum--;
+}
+
+void DFS(Node* p, string& s)
+{
+	if (p->name != '#')
+	{
+		hfm[p->name] = s;
+		return;
+	}
+	string s1 = s;
+	string l = s.append("0");
+	string r = s1.append("1");
+	DFS(p->lc, l);
+	DFS(p->rc, r);
+}
+
+int main()
+{
+	int len = 0;
+	char c;
+	Node* root = NULL;
+	for (int i = 0;i < 26;i++)
+	{
+		mp['a' + i] = 0;
+	}
+	while (1)
+	{
+		c = getchar();
+		if ((c>='a'&&c<='z')||c==32)
+		{
+			mp[c]++;
+		}
+		else
+		{
+			break;
+		}
+	}
+	for (int i = 0;i < 26;i++)
+	{
+		if (mp['a' + i] != 0)
+		{
+			ncount++;
+		}
+	}
+	tempnum = ncount;
+	int j = 0;//init
+	for (int i = 0;i < 26;i++)
+	{
+		if (mp['a' + i] != 0)
+		{
+			Node* p;
+			p = (Node*)malloc(sizeof(node));
+			p->weight = mp['a' + i];p->parent = p->lc = p->rc = NULL;p->name = 'a' + i;
+			workspace[j] = p;
+			wsnum[j++] = p->weight;
+		}
+	}//init
+	while (tempnum != 1)
+	{
+		select();
+	}
+	for (int i = 0;i < 52;i++)
+	{
+		if (wsnum[i] != 0)
+		{
+			root = workspace[i];
+		}
+	}
+	string s;
+	s.clear();
+	DFS(root, s);
+	for (int i = 0;i < 26;i++)
+	{
+		char c = 'a' + i;
+		if (mp[c] != 0)
+		{
+			cout << c << '(' << mp['a' + i] << ')' << hfm['a' + i] << endl;
+			len += hfm['a' + i].length() * mp['a' + i];
+		}
+	}
+	cout << len;
+}

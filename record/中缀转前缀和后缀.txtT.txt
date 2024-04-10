@@ -1,0 +1,166 @@
+#include<bits/stdc++.h>
+using namespace std;
+void trans(char* exp, char* postexp)
+{
+	stack<char>opt;
+	int i = 0;
+	char e;
+	while (*exp != '\0')
+	{
+		switch (*exp)
+		{
+		case'(':
+			opt.push('(');
+			exp++;
+			break;
+		case')':
+			e = opt.top();
+			while (e != '(')
+			{
+				postexp[i++] = e;
+				opt.pop();
+				e = opt.top();
+			}
+			opt.pop();
+			exp++;
+			break;
+		case'+':
+		case'-':
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e != '(')
+				{
+					postexp[i++] = e;
+					opt.pop();
+				}
+				else
+					break;
+			}
+			opt.push(*exp);
+			exp++;
+			break;
+		case'*':
+		case'/':
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e == '*' || e == '/')
+				{
+					postexp[i++] = e;
+					opt.pop();
+				}
+				else
+					break;
+			}
+			opt.push(*exp);
+			exp++;
+			break;
+		default:
+			
+				postexp[i++] = *exp;
+				exp++;
+			
+
+		}
+	}
+	while (!opt.empty())
+	{
+		e = opt.top();
+		postexp[i++] = e;
+		opt.pop();
+	}
+	postexp[i++] = '\0';
+}
+
+void tran(string exp, char* preexp,int len)//转成前缀
+{
+	stack<char>opt, num;
+	char e;
+	int i = len - 1;int j = 0;
+	while (i >= 0)
+	{
+		switch (exp[i])
+		{
+		case')':
+			opt.push(')');
+			i--;
+			break;
+		case'(':
+			e = opt.top();
+			while (e != ')')
+			{
+				num.push(e);
+				opt.pop();
+				e = opt.top();
+			}
+			opt.pop();
+			i--;
+			break;
+		case'*':
+		case'/':
+			opt.push(exp[i]);
+			i--;
+			break;
+		case'+':
+		case'-':
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e == '*' || e == '/')
+				{
+					num.push(e);
+					opt.pop();
+				}
+				else
+				{
+					break;
+				}
+			}
+			opt.push(exp[i]);
+			i--;
+			break;
+		default:
+			num.push(exp[i]);
+			i--;
+		}
+	}
+	while (!opt.empty())
+	{
+		e = opt.top();
+		num.push(e);
+		opt.pop();
+	}
+	while (!num.empty())
+	{
+		e = num.top();
+		*(preexp + j) = e;
+		num.pop();
+		j++;
+	}
+	*(preexp + j) = '\0';
+}
+int main()
+{
+	string exp;
+	cin >> exp;
+	char cexp[100];
+	char ansexp[100];
+	int len =exp.length();
+	int j = 0;
+	for (int i = 0;i < len;i++)
+	{
+		cexp[i] = exp[i];
+		if (exp[i] != '(' && exp[i] != ')')
+		{
+			ansexp[j++] = exp[i];
+		}
+	}
+	ansexp[j] = '\0';
+	cexp[len] = '\0';
+	char postexp[100];
+	char preexp[100];
+	tran(exp, preexp, len);
+	trans(cexp, postexp);
+	printf("%s\n%s\n%s",preexp,ansexp,postexp);
+}

@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <algorithm>
+using namespace std;
+
+int main()
+{
+    int m, x, y, l, r;
+    double n, minn, t;
+    while (~scanf_s("%lf%d", &n, &m))
+    {
+        x = y = 1;
+        minn = 999999;
+        while (x <= m && y <= m)
+        {
+            t = fabs(n - x * 1.0 / y);
+            if (t < minn)
+            {
+                l = x;
+                r = y;
+                minn = t;
+            }
+            if (x * 1.0 / y >= n) y++;
+            else x++;
+        }
+        printf("%d %d\n", l, r);
+    }
+}

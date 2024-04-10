@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<stdlib.h>
+void gmatrix(int* p, int m)
+{
+	int i;
+	for (i = 0;i < m * m;i++)
+	{
+		scanf_s("%d", p + i);
+	}
+}
+int mtp(int m, int n,int k,int *p,int*q)
+{
+	int sum=0;
+	int i;
+	for (i = 0;i < k;i++)
+	{
+		sum += (*(p + k * m + i)) * (*(q + k * i + n));
+	}
+	return sum;
+}
+int main()
+{
+	int m;scanf_s("%d", &m);
+	int* p,*q;
+	p = (int*)malloc(sizeof(int) * m * m);
+	q = (int*)malloc(sizeof(int) * m * m);
+	memset(p, 0, 4 * m * m);
+	memset(q, 0, 4 * m * m);
+	gmatrix(p, m);
+	gmatrix(q, m);
+	int i, j;
+	for (i = 0;i < m;i++)
+	{
+		for (j = 0;j < m;j++)
+		{
+			printf("%d  ", mtp(i, j, m,p,q));
+		}
+		printf("\n");
+	}
+}

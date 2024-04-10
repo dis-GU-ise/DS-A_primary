@@ -1,0 +1,84 @@
+#include<bits/stdc++.h>
+using namespace std;
+void trans(char*exp,char *postexp)
+{
+	stack<char>opt;
+	int i = 0;
+	char e;
+	while (*exp != '\0')
+	{
+		switch(*exp)
+		{
+		case'(':
+			opt.push('(');
+			exp++;
+			break;
+		case')':
+			e=opt.top();
+			while (e != '(')
+			{
+				postexp[i++] = e;
+				opt.pop();
+				e = opt.top();
+			}
+			opt.pop();
+			exp++;
+			break;
+		case'+':
+		case'-':
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e != '(')
+				{
+					postexp[i++] = e;
+					opt.pop();
+				}
+				else
+					break;
+			}
+			opt.push(*exp);
+			exp++;
+			break;
+		case'*':
+		case'/':
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e == '*' || e == '/')
+				{
+					postexp[i++] = e;
+					opt.pop();
+				}
+				else
+					break;
+			}
+			opt.push(*exp);
+			exp++;
+			break;
+		default:
+			while (*exp >= '0' && *exp <= '9')
+			{
+				postexp[i++] = *exp;
+				exp++;
+			}
+			
+		}
+	}
+	while (!opt.empty())
+	{
+		e=opt.top();
+		postexp[i++] = e;
+		opt.pop();
+	}
+	postexp[i++] = '\0';
+}
+
+int main()
+{
+	char exp[] = "1+2+3";//输入代求表达式
+	char post[1000];
+	trans(exp, post);
+	printf("%s", post);
+	return 0;
+}

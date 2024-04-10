@@ -1,0 +1,55 @@
+#include<stdio.h>
+#include<string.h>
+
+using namespace std;
+char s[730][730];
+
+int threepow(int x)
+{
+	int result = 1;
+	for (int i = 0;i < x;i++)
+	{
+		result *= 3;
+	}
+	return result;
+}
+void draw(int x, int y, int k)
+{
+	if (k == 0)
+	{
+		s[x][y] = 'X';
+		return;
+	}
+	draw(x, y, k - 1);
+	draw(x + threepow(k - 1), y + threepow(k - 1), k - 1);
+	draw(x + 2 * threepow(k - 1), y, k - 1);
+	draw(x, y + 2 * threepow(k - 1), k - 1);
+	draw(x + 2 * threepow(k - 1), y + 2 * threepow(k - 1), k - 1);
+}
+int main()
+{
+	int n;
+	while (scanf_s("%d", &n) == 1)
+	{
+		if (n == -1)
+		{
+			break;
+		}
+		memset(s, ' ', sizeof(s));
+		draw(0, 0, n - 1);
+		for (int i = 0;i < threepow(n - 1);i++)
+		{
+			for (int j = threepow(n - 1)-1;j >= 0;j--)
+			{
+				if (s[i][j] == 'X')
+				{
+					s[i][j + 1] = '\0';
+					break;
+				}
+			}
+			printf("%s\n", s[i]);
+		}
+		printf("-\n");
+	}
+
+}

@@ -1,0 +1,36 @@
+#include<stdio.h>
+int max(int x, int y)
+{
+	if (x > y)
+	{
+		return x;
+	}
+	else
+	{
+		return y;
+	}
+}
+int min(int x, int y)
+{
+	if (x < y)
+	{
+		return x;
+	}
+	else
+	{
+		return y;
+	}
+}
+int main()
+{
+	int l, n, i,k;
+	int zuida, zuixiao;zuida = zuixiao = 0;
+	scanf_s("%d%d", &l, &n);
+	for (i = 0;i < n;i++)
+	{
+		scanf_s("%d", &k);
+		zuida = max(zuida, max(k, l + 1 - k));
+		zuixiao = max(zuixiao, min(k, l + 1 - k));
+	}
+	printf("%d %d", zuixiao, zuida);
+}

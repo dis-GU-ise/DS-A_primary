@@ -1,0 +1,59 @@
+编制一个成绩管理。每个学生信息：学号、姓名、数学成绩、英语成绩、c语言成绩
+
+注：学号最大12位，姓名最大10字节，成绩都是整数。
+
+首先输入n（n10），再每行输入单个学生的5项信息。
+
+按数学成绩从大到小排序后，全面输出学生信息，每个学生一行信息。
+
+
+#include<stdio.h>
+#include<string.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#define gets(S) fgets(S,sizeof(S),stdin)
+
+typedef struct stu
+{
+	long long num;
+	char name[11];
+	int ms;
+	int es;
+	int cs;
+}stu;
+void compare(stu* p,int n)
+{
+	int i, j;stu temp;
+	for (i = 0;i < n - 1;i++)
+	{
+		for (j = 0;j < n - 1 - i;j++)
+			if ((p + j)->ms < (p + j + 1)->ms)
+			{
+				temp = *(p + j);
+				*(p + j) = *(p + j + 1);
+				*(p + j + 1) = temp;
+			}
+	}
+}
+int main()
+{
+	int i;
+	int n;scanf_s("%d", &n);
+	stu s[10];
+	stu* p;
+	for (i = 0;i < n;i++)
+	{
+		scanf_s("%lld%s%d%d%d", &s[i].num, s[i].name,10, &s[i].ms,&s[i].es, &s[i].cs);
+		
+	}
+	p = s;
+	compare(p, n);
+	for (i = 0;i < n;i++)
+	{
+		printf("%lld ", s[i].num);
+		printf("%s", s[i].name);
+		printf("%3d%3d%3d", s[i].ms, s[i].es, s[i].cs);
+		printf("\n");
+	}
+}

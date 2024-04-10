@@ -1,0 +1,165 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef struct node
+{
+	node* son;
+	node* bro;
+	char data;
+	int tag;
+}Node;
+
+int leafnum=0;
+int maxdep=0;
+queue<Node*>seq;
+char cengci[100];
+int len = 0;
+
+void init(Node*&root)
+{
+	char f, c,e;
+	Node* temp;
+	for (cin>>f>>e>>c;c != '#';cin>>f>>e>>c)
+	{
+		//cengci[len++] = c;
+		Node* p;
+		p = (Node*)malloc(sizeof(Node));
+		p->data = c;p->son = p->bro = NULL;p->tag = 0;
+		if (f == '#')
+		{
+			p->tag = 1;
+			root = p;
+			seq.push(p);
+		}
+		else
+		{
+			cengci[len++] = c;
+			temp = seq.front();
+			while (f != temp->data)
+			{
+				if (temp->son == NULL)
+				{
+					leafnum++;
+				}
+				seq.pop();
+				temp = seq.front();
+			}
+			if (temp->son == NULL)
+			{
+				seq.push(p);
+				temp->son = p;
+			}
+			else
+			{
+				temp = temp->son;
+				while (temp->bro != NULL) 
+				{
+					temp = temp->bro;
+				}
+				temp->bro = p;
+				seq.push(p);
+			}
+
+		}
+	}
+	while (!seq.empty())//余下结点出队列，没有孩子的是叶子
+	{
+		temp = seq.front();
+		if (temp->son == NULL)
+		{
+			leafnum++;
+		}
+		seq.pop();
+	}
+	cengci[len] = '\0';
+}
+
+void pre(Node* p,int d)//改造的前序遍历，包括计算深度
+{
+	if (p == NULL)
+	{
+		maxdep = (maxdep > d) ? maxdep : d;
+		return;
+	}
+	if (!p->tag)//不打印根结点
+	{
+		printf("%c", p->data);
+	}
+		p = p->son;
+		pre(p, d + 1);
+		if (p != NULL) {
+			while (p->bro != NULL)
+			{
+				p = p->bro;
+				pre(p, d + 1);
+			}
+		}
+	return;
+}
+void post(Node* p)//改造的后序遍历
+{
+	if (p == NULL)
+	{
+		return;
+	}
+	Node* temp = p->son;
+	post(temp);
+	if (temp != NULL) {
+		while (temp->bro != NULL)
+		{
+			temp = temp->bro;
+			post(temp);
+		}
+	}
+	if (!p->tag)//不打印根结点
+	{
+		printf("%c", p->data);
+	}
+	return;
+}
+
+char path[100];
+int pathlen = 0;
+void allpath(Node *p)
+{
+	if (p != NULL)
+	{
+		if (p->son == NULL)
+		{ 
+			path[pathlen++] = p->data;
+			for (int i = 1; i < pathlen; i++)//不打印根结点时i从1开始遍历
+			{
+				printf("%c", path[i]);
+			}
+			cout << endl;
+			pathlen--;
+			return;
+		}
+		else
+		{
+			path[pathlen++] = p->data;
+			p = p->son;
+			allpath(p);
+			while (p->bro != NULL)
+			{
+				p = p->bro;
+				allpath(p);
+			}
+			pathlen--;
+		}
+	}
+}
+
+int main()
+{
+	Node* root;
+	root = (Node*)malloc(sizeof(Node));
+	init(root);
+	pre(root,0);//先序
+	printf("\n");
+	post(root);//后序
+	cout << endl;
+	cout << cengci<<endl;
+	cout << maxdep-1<<endl<<leafnum<<endl;//深度和叶子数
+	allpath(root);
+}

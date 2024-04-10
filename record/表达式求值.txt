@@ -1,0 +1,156 @@
+#include<bits/stdc++.h>
+using namespace std;
+void trans(char*exp,char *postexp)//用来将中缀表达式（就是我们一般写的表达式形式）转换成逆波兰表达式（后缀表达式）
+                                                        //exp是读入的表达式（中缀），postexp就是处理好的后缀
+{                    
+	stack<char>opt;//用栈，存放运算符
+	int i = 0;
+	char e;
+	while (*exp != '\0')//没到结尾就一直处理
+	{
+		switch(*exp)//进栈规则：数字直接进后缀表达式postexp，并且整个数字放进去了以后加个“#”作为标记，
+                                                   //运算符采取如下规则：仅当要处理的运算符优先级严格高于栈顶才入栈，
+                                                  // 否则依次出栈已经存在栈里的运算符，放入postexp，直到栈顶运算符优先级严格小于接下来要处理的运算符
+		{
+		case'('://左括号，优先级高，直接放入
+			opt.push('(');
+			exp++;
+			break;
+		case')'://右括号，由于括号优先级高于其他，所以将栈内已经有的运算符依次出栈，直到遇到与之匹配的左括号
+			e=opt.top();
+			while (e != '(')
+			{
+				postexp[i++] = e;
+				opt.pop();
+				e = opt.top();
+			}
+			opt.pop();//postexp里不用括号，所以左右括号直接去掉就行
+			exp++;
+			break;
+		case'+':
+		case'-'://加减同级，且是最低优先级，一起处理
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e != '(')
+				{
+					postexp[i++] = e;
+					opt.pop();//由于优先级最低，直接无脑出栈已经存进栈的，直到遇到左括号或者栈空
+				}
+				else
+					break;
+			}
+			opt.push(*exp);//然后再把加号或者减号放进去
+			exp++;
+			break;
+		case'*':
+		case'/':
+			while (!opt.empty())
+			{
+				e = opt.top();
+				if (e == '*' || e == '/')
+				{
+					postexp[i++] = e;
+					opt.pop();//乘除是仅次于括号的最高优先级，栈顶是乘除（同级）就出栈，
+                                                                                                //不是乘除（就是加减，优先级比乘除底），就把乘除入栈
+				}
+				else
+					break;
+			}
+			opt.push(*exp);
+			exp++;
+			break;
+		default://处理数字
+			while (*exp >= '0' && *exp <= '9')
+			{
+				postexp[i++] = *exp;
+				exp++;
+			}
+			postexp[i++] = '#';//数字结尾处放个特殊符号，不然到时候没法把数字从字符转整数型
+			
+		}
+	}
+	while (!opt.empty())
+	{
+		e=opt.top();
+		postexp[i++] = e;
+		opt.pop();
+	}
+	postexp[i++] = '\0';//末尾加\0
+}
+
+int cal(char* postexp)//计算处理好的postexp
+{
+	int a, b, c, d, e;
+	stack<int>num;
+	while (*postexp != '\0')
+	{
+		switch (*postexp)//处理法则就是每次遇到一个运算符就取栈顶的两个元素，运算后把结果放回栈顶
+		{
+		case'+':
+			a = num.top();
+			num.pop();
+			b = num.top();
+			num.pop();
+			c = a + b;
+			num.push(c);
+			postexp++;
+			break;
+		case'-':
+			a = num.top();
+			num.pop();
+			b = num.top();
+			num.pop();
+			c = b-a;
+			num.push(c);
+			postexp++;
+			break;
+		case'*':
+			a = num.top();
+			num.pop();
+			b = num.top();
+			num.pop();
+			c = a * b;
+			num.push(c);
+			postexp++;
+			break;
+		case'/':
+			a = num.top();
+			num.pop();
+			b = num.top();
+			num.pop();
+			c = b/a;
+			num.push(c);
+			postexp++;
+			break;
+		default://如果是数字，把字符串数字转换成整型，并且入栈。“#“的作用就在这里，如果不加的话无法分开相邻的两个数，
+                                             //比如1234，你就不知道是12和34，还是123和4
+			d = 0;
+			while (*postexp >= '0' && *postexp <= '9')
+			{
+				d = d * 10 + *postexp - '0';
+				postexp++;
+			}
+			num.push(d);
+			postexp++;
+			break;
+		}
+		
+	}
+	e = num.top();
+	num.pop();
+	return e;//整个式子处理完了，栈里只剩下一个元素，就是结果
+}
+
+
+int main()
+{
+	char exp[1000];
+	scanf("%s", exp, 1000);
+	char post[1000];
+	trans(exp, post);
+	int ans;
+	ans = cal(post);
+	printf("%d", ans);
+	return 0;
+}

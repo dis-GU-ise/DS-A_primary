@@ -1,0 +1,34 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdio.h>
+int huiwen(char* p,int i)
+{
+	int j;int flag = 1;
+	for (j = 0;j < i / 2;j++)
+	{
+		if (*(p + j) != *(p + i - 1 - j))
+			flag = 0;
+	}
+	return flag;
+}
+int main()
+{
+	char a[1000] = {"asdyuifhwdfghjhgfdyubdng"};
+	//scanf_s("%s", a, 999);
+	int len = strlen(a);
+	int i, j,k,m=0,n=0;char* p;p = a;
+	for (i = len;i > 0;--i)
+	{
+		for (j = 0;j < len - i+1;j++)
+			if (huiwen(p + j, i)) {
+				m = j;
+				break;
+			}
+		if (m!=0) {
+			n = i;break;
+		}
+	}
+	if (n == 1)printf("找不到");
+	else for (k = 0;k < n;k++)
+		printf("%c", *(p + m + k));
+}S
